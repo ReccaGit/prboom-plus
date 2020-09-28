@@ -158,6 +158,9 @@ typedef enum
   hq_scale_2x,
   hq_scale_3x,
   hq_scale_4x,
+  hq_normal_2x,
+  hq_normal_3x,
+  hq_normal_4x,
   
   hq_scale_max
 } gl_hqresizemode_t;

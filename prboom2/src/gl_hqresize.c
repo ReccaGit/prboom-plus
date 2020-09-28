@@ -79,7 +79,7 @@
 
 int gl_texture_hqresize;
 const char *gl_hqresizemodes[hq_scale_max] = {
-  "Off", "Scale2x", "Scale3x", "Scale4x"};
+  "Off", "Scale2x", "Scale3x", "Scale4x", "Normal2x", "Normal3x", "Normal4x"};
 
 int gl_texture_hqresize;
 int gl_texture_hqresize_maxinputsize = 512;
@@ -186,6 +186,55 @@ static void scale4x ( unsigned int* inputBuffer, unsigned int* outputBuffer, int
   free(buffer2x);
 }
 
+static void normal2x ( unsigned int* inputBuffer, unsigned int* outputBuffer, int inWidth, int inHeight, int seamlessWidth, int seamlessHeight )
+{
+  int i, j;
+  const int width = 2* inWidth;
+  //const int height = 2 * inHeight;
+
+  for ( i = 0; i < inWidth; ++i )
+  {
+    for ( j = 0; j < inHeight; ++j )
+    {
+      outputBuffer[2*i   + width*2*j    ] = inputBuffer[ i     +inWidth*j    ];
+      outputBuffer[2*i   + width*(2*j+1)] = inputBuffer[ i     +inWidth*j    ];
+      outputBuffer[2*i+1 + width*2*j    ] = inputBuffer[ i     +inWidth*j    ];
+      outputBuffer[2*i+1 + width*(2*j+1)] = inputBuffer[ i     +inWidth*j    ];
+    }
+  }
+}
+
+static void normal3x ( unsigned int* inputBuffer, unsigned int* outputBuffer, int inWidth, int inHeight, int seamlessWidth, int seamlessHeight )
+{
+  int i, j;
+  const int width = 3* inWidth;
+  //const int height = 3 * inHeight;
+
+  for ( i = 0; i < inWidth; ++i )
+  {
+    for ( j = 0; j < inHeight; ++j )
+    {
+      outputBuffer[3*i   + width*3*j    ] = inputBuffer[ i     +inWidth*j    ];
+      outputBuffer[3*i   + width*(3*j+1)] = inputBuffer[ i     +inWidth*j    ];
+      outputBuffer[3*i   + width*(3*j+2)] = inputBuffer[ i     +inWidth*j    ];
+      outputBuffer[3*i+1 + width*3*j    ] = inputBuffer[ i     +inWidth*j    ];
+      outputBuffer[3*i+1 + width*(3*j+1)] = inputBuffer[ i     +inWidth*j    ];
+      outputBuffer[3*i+1 + width*(3*j+2)] = inputBuffer[ i     +inWidth*j    ];
+      outputBuffer[3*i+2 + width*3*j    ] = inputBuffer[ i     +inWidth*j    ];
+      outputBuffer[3*i+2 + width*(3*j+1)] = inputBuffer[ i     +inWidth*j    ];
+      outputBuffer[3*i+2 + width*(3*j+2)] = inputBuffer[ i     +inWidth*j    ];
+    }
+  }
+}
+
+static void normal4x ( unsigned int* inputBuffer, unsigned int* outputBuffer, int inWidth, int inHeight, int seamlessWidth, int seamlessHeight )
+{
+  unsigned int * buffer2x = malloc((2 * inWidth) * (2 * inHeight) * sizeof(unsigned int));
+  normal2x (inputBuffer, buffer2x, inWidth, inHeight, seamlessWidth, seamlessHeight);
+  normal2x (buffer2x, outputBuffer, 2 * inWidth, 2 * inHeight, seamlessWidth, seamlessHeight);
+  free(buffer2x);
+}
+
 
 static unsigned char *HQScaleHelper( void (*scaleNxFunction) ( unsigned int* , unsigned int* , int , int, int, int),
                                     const int N,
@@ -272,6 +321,15 @@ unsigned char* gld_HQResize(GLTexture *gltexture, unsigned char *inputBuffer, in
     break;
   case hq_scale_4x:
     result = HQScaleHelper(&scale4x, 4, inputBuffer, inWidth, inHeight, &w, &h, sw, sh);
+    break;
+  case hq_normal_2x:
+    result = HQScaleHelper(&normal2x, 2, inputBuffer, inWidth, inHeight, &w, &h, sw, sh);
+    break;
+  case hq_normal_3x:
+    result = HQScaleHelper(&normal3x, 3, inputBuffer, inWidth, inHeight, &w, &h, sw, sh);
+    break;
+  case hq_normal_4x:
+    result = HQScaleHelper(&normal4x, 4, inputBuffer, inWidth, inHeight, &w, &h, sw, sh);
     break;
   }
 

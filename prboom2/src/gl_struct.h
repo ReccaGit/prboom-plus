@@ -45,6 +45,8 @@ typedef enum {
   filter_nearest_mipmap_linear,
   filter_linear_mipmap_nearest,
   filter_linear_mipmap_linear,
+  filter_linear_mipmap_nearest_mipmap,
+  filter_linear_mipmap_linear_mipmap,
 
   filter_count
 } filter_texture_mode_t;

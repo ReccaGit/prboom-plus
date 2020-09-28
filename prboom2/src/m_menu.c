@@ -3328,7 +3328,7 @@ setup_menu_t gen_settings7[] =
 };
 
 static const char *gltexfilters[] = {
-  "None", "Linear", "Nearest Mipmap", "Linear Mipmap", "Bilinear", "Trilinear", NULL};
+  "None", "Linear", "Nearest Mipmap", "Linear Mipmap", "Bilinear", "Trilinear", "Bilinear Mipmap", "Trilin. Mipmap", NULL};
 
 static const char *gltexfilters_anisotropics[] = 
   {"Off", "2x", "4x", "8x", "16x", NULL};

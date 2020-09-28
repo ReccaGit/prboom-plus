@@ -154,6 +154,7 @@ const char *const standard_iwads[]=
 
   "hacx.wad",
   "chex.wad",
+  "rekkrsa.wad",
 
   "bfgdoom2.wad",
   "bfgdoom.wad",
@@ -774,7 +775,7 @@ void CheckIWAD(const char *iwadname,GameMode_t *gmode,dboolean *hassec)
 {
   if ( !access (iwadname,R_OK) )
   {
-    int ud=0,rg=0,sw=0,cm=0,sc=0,hx=0,cq=0;
+    int ud=0,rg=0,sw=0,cm=0,sc=0,hx=0,cq=0,rk=0;
     dboolean noiwad=0;
     FILE* fp;
 
@@ -839,10 +840,12 @@ void CheckIWAD(const char *iwadname,GameMode_t *gmode,dboolean *hassec)
           if (!strncmp(fileinfo[length].name,"W94_1",5) ||
               !strncmp(fileinfo[length].name,"POSSH0M0",8))
             cq++;
+          if (!strncmp(fileinfo[length].name,"REKCREDS",4))
+            rk++;
         }
         free(fileinfo);
 
-        if (noiwad && !bfgedition && cq < 2)
+        if (noiwad && !bfgedition && !rk && cq < 2)
           I_Error("CheckIWAD: IWAD tag %s not present", iwadname);
 
       }
@@ -898,6 +901,8 @@ void AddIWAD(const char *iwad)
     gamemission = doom;
     if (i>=8 && !strnicmp(iwad+i-8,"chex.wad",8))
       gamemission = chex;
+    if (i>=8 && !strnicmp(iwad+i-8,"rekkrsa.wad",8))
+      gamemission = rekkr;
     break;
   case commercial:
     gamemission = doom2;
@@ -1440,6 +1445,9 @@ static void D_DoomMainSetup(void)
       {
         case chex:
           doomverstr = "Chex(R) Quest";
+          break;
+        case rekkr:
+          doomverstr = "REKKR";
           break;
         default:
           doomverstr = "The Ultimate DOOM";
